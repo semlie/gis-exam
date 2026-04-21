@@ -1,9 +1,14 @@
 {
+  "name": "server",
+  "version": "1.0.0",
+  "main": "server.js",
+  "express": "^5.2.1",
+  "type": "module",
+  "init": "^0.1.2",
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
-    "express": "^5.2.1",
-    "type": "module",
-    "init": "^0.1.2"
+    "jsonwebtoken": "^9.0.3"
   }
 }
