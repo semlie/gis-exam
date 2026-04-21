@@ -18,6 +18,15 @@ const usersController = {
       console.error("Error adding the user to the database:", err);
       res.status(500).json({ error: "Error adding the user" });
     }
+  },
+  getAllStudents: async (req, res)=> {
+    try {
+      const rows = database.prepare(usersModel.getAllStudents).all('student');
+      res.json(rows);
+    } catch (err) {
+      console.error("Error fetching students:", err);
+      res.status(500).json({ error: "Error fetching students" });
+    }
   }
 };
 

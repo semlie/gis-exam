@@ -15,9 +15,19 @@ const users = `CREATE TABLE IF NOT EXISTS users(
                FOREIGN KEY (class_id) REFERENCES classes(class_id)
                ) STRICT;`;
 
+const locations = `CREATE TABLE IF NOT EXISTS locations (
+        user_id TEXT,
+        time TEXT,
+        coordinates TEXT,
+        PRIMARY KEY (user_id, time),
+        FOREIGN KEY (user_id) REFERENCES users(user_id) 
+            ON DELETE CASCADE 
+            ON UPDATE CASCADE)`;
+            
 try {
   database.exec(classes);
   database.exec(users);
+  database.exec(locations)
 } catch (err) {
   console.error("❌ Error creating tables:", err.message);
 }
