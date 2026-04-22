@@ -17,7 +17,7 @@ const Menu = () => {
           רישום
         </button>
         <button
-          onClick={() => navigate(`/${Paths.register}`)}
+          onClick={() => navigate(`/${Paths.login}`)}
           style={{ padding: '12px 16px', background: '#000', color: '#fff', border: 'none', cursor: 'pointer', borderRadius: '8px' }}
         >
           התחברות למורים

@@ -1,4 +1,5 @@
 
 export const Paths = {
-  register: 'register'
+  register: 'register',
+  login: 'login'
 };
