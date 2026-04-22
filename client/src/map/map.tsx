@@ -19,17 +19,17 @@ const MyMap = ({ points }) => {
   const position = [32.0853, 34.7818];
 
   return (
-    <MapContainer center={position} zoom={13} style={{ height: '400px', width: '100%' }}>
+    <MapContainer center={position} zoom={13} style={{ height: '100%', width: '100%' }}>
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       />
       
       {points.map((point) => (
-        <Marker key={`${point.id}-${point.time}`} position={[point.lat, point.lng]}>
+        <Marker key={`${point.user_id}-${point.time}`} position={[point.lat, point.lng]}>
           <Popup>
             <div>
-              <p><strong>ID:</strong> {point.id}</p>
+              <p><strong>User ID:</strong> {point.user_id}</p>
               <p><strong>Time:</strong> {point.time}</p>
             </div>
           </Popup>
