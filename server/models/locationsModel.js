@@ -1,5 +1,5 @@
 const locations = {
-  getAllLocations: "SELECT id, coordinates, time FROM locations WHERE (id, time) IN ( SELECT id, MAX(time) FROM locations GROUP BY id);",
-  addLocations: "INSERT INTO locations (id, time, coordinates) VALUES (?, ?, ?)"
+  getAllLocations: "SELECT user_id, coordinates, time FROM locations WHERE (user_id, time) IN (SELECT user_id, MAX(time) FROM locations GROUP BY user_id);",
+  addLocations: "INSERT INTO locations (user_id, time, coordinates) VALUES (?, ?, ?)"
 };
 export default locations;
