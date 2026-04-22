@@ -1,27 +1,23 @@
 import React, { useState } from 'react';
-import {Search } from 'lucide-react';
-
+import {Navigation, Search } from 'lucide-react';
+import { useNavigate } from 'react-router';
+import { Paths } from '../routes/paths';
 const Menu = () => {
   // ניהול מצב המודלים (פתוח/סגור)
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isContactOpen, setIsContactOpen] = useState(false);
-
+  const navigate =  useNavigate();
   return (
     <aside style={{ width: '280px', minHeight: '100vh', borderRight: '1px solid #ddd', background: '#f8f9fa', padding: '24px', boxSizing: 'border-box' }}>
-      <div style={{ marginBottom: '24px' }}>
-        <h2 style={{ margin: 0, marginBottom: '16px', fontSize: '24px' }}>תפריט</h2>
-        <p style={{ margin: 0, color: '#555' }}>ברוכים הבאים לעמוד הנחיתה.</p>
-      </div>
-
       <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
         <button
-          onClick={() => setIsMenuOpen(true)}
+          onClick={() => navigate(`/${Paths.register}`)}
           style={{ padding: '12px 16px', background: '#000', color: '#fff', border: 'none', cursor: 'pointer', borderRadius: '8px' }}
         >
           רישום
         </button>
         <button
-          onClick={() => setIsContactOpen(true)}
+          onClick={() => navigate(`/${Paths.register}`)}
           style={{ padding: '12px 16px', background: '#000', color: '#fff', border: 'none', cursor: 'pointer', borderRadius: '8px' }}
         >
           התחברות למורים

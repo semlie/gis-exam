@@ -14,6 +14,13 @@ let DefaultIcon = L.icon({
 });
 L.Marker.prototype.options.icon = DefaultIcon;
 
+const TeacherIcon = L.divIcon({
+  className: '',
+  html: '<div style="width: 20px; height: 20px; border-radius: 50%; background: red; border: 2px solid white; box-shadow: 0 0 4px rgba(0,0,0,0.4);"></div>',
+  iconSize: [20, 20],
+  iconAnchor: [10, 10]
+});
+
 const MyMap = ({ points }) => {
   // נקודת מרכז ראשונית (למשל תל אביב)
   const position = [32.0853, 34.7818];
@@ -25,16 +32,26 @@ const MyMap = ({ points }) => {
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       />
       
-      {points.map((point) => (
-        <Marker key={`${point.user_id}-${point.time}`} position={[point.lat, point.lng]}>
-          <Popup>
-            <div>
-              <p><strong>User ID:</strong> {point.user_id}</p>
-              <p><strong>Time:</strong> {point.time}</p>
-            </div>
-          </Popup>
-        </Marker>
-      ))}
+      {points.map((point) => {
+        const role = String(point.role ?? '').trim().toLowerCase();
+        const isTeacher = role === 'teacher';
+
+        return (
+          <Marker
+            key={`${point.user_id}-${point.time}`}
+            position={[point.lat, point.lng]}
+            icon={isTeacher ? TeacherIcon : DefaultIcon}
+          >
+            <Popup>
+              <div>
+                <p><strong>User ID:</strong> {point.user_id}</p>
+                <p><strong>Role:</strong> {point.role ?? 'unknown'}</p>
+                <p><strong>Time:</strong> {point.time}</p>
+              </div>
+            </Popup>
+          </Marker>
+        );
+      })}
     </MapContainer>
   );
 };

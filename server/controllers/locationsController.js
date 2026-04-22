@@ -11,8 +11,15 @@ getAllLocations: async (req, res) => {
     const rows = database.prepare(locationsModel.getAllLocations).all();
     const mapPoints = rows.map(row => {
       const coords = JSON.parse(row.coordinates);
+      let role = row.role;
+      if (!role) {
+        const user = database.prepare('SELECT role FROM users WHERE user_id = ?').get(row.user_id);
+        role = user?.role ?? null;
+      }
+
       return {
         user_id: row.user_id,
+        role,
         time: row.time,
         lat: dmsToDecimal(coords.Latitude.Degrees, coords.Latitude.Minutes, coords.Latitude.Seconds),
         lng: dmsToDecimal(coords.Longitude.Degrees, coords.Longitude.Minutes, coords.Longitude.Seconds)
