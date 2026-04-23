@@ -10,6 +10,7 @@ const users = `CREATE TABLE IF NOT EXISTS users(
                user_id TEXT PRIMARY KEY,
                first_name TEXT,
                last_name TEXT,
+               password TEXT,
                role TEXT CHECK(role IN ('student', 'teacher')),
                class_id INTEGER,
                FOREIGN KEY (class_id) REFERENCES classes(class_id)

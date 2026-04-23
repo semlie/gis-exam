@@ -2,8 +2,10 @@
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
 dotenv.config();
-const secretKey = process.env.SECRETKEY;
-
+const secretKey = process.env.SECRETKEY || 'default_secret_key_1234';
+if (!process.env.SECRETKEY) {
+  console.warn('WARNING: SECRETKEY is not set. Using fallback JWT secret.');
+}
 const generateToken = (payload) => {
     return jwt.sign(payload, secretKey, { expiresIn: '1h' });
 };
@@ -28,13 +30,13 @@ function verifyToken(req, res, next) {
         res.status(401).json({ error: 'Invalid token' });
     }
 };
-function isAdmin(req, res, next) 
+function isTeacher(req, res, next) 
 {
-    if (req.role != "admin") 
-    { // תפקיד 1 = מנהל
+    if (req.role != "teacher") 
+    {
         return res.status(403).json({ error: 'Access denied' });
     }
     next();
 }
 
-export { verifyToken, generateToken, isAdmin};
+export { verifyToken, generateToken, isTeacher};
