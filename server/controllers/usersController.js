@@ -2,7 +2,7 @@ import usersModel from "../models/usersModel.js";
 import database from '../db/initDB.js';
 import bcrypt from "bcrypt";
 import { generateToken } from "../middleware/auth.js";
-
+import classesModel from '../models/classesModel.js'
 const usersController = {
   register: async (req, res) => {
     const { user_id, first_name, last_name, password, role, class_id } = req.body;
@@ -27,7 +27,7 @@ const usersController = {
       return res.status(409).json({ error: "User ID already exists" });
     }
 
-    const classExists = database.prepare('SELECT class_id FROM classes WHERE class_id = ?').get(class_id);
+    const classExists = database.prepare(classesModel.getClassIdByClassId).get(class_id);
     if (!classExists) {
       return res.status(400).json({ error: "Class ID does not exist" });
     }

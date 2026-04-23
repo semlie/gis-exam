@@ -1,5 +1,6 @@
 import database from '../db/initDB.js';
 import locationsModel from '../models/locationsModel.js'
+import usersModel from '../models/usersModel.js'
 // פונקציה להמרת DMS (מעלות, דקות, שניות) לעשרוני
 function dmsToDecimal(d, m, s) {
     return parseFloat(d) + (parseFloat(m) / 60) + (parseFloat(s) / 3600);
@@ -13,7 +14,7 @@ getAllLocations: async (req, res) => {
       const coords = JSON.parse(row.coordinates);
       let role = row.role;
       if (!role) {
-        const user = database.prepare('SELECT role FROM users WHERE user_id = ?').get(row.user_id);
+        const user = database.prepare(usersModel.getRoleById).get(row.user_id);
         role = user?.role ?? null;
       }
 
