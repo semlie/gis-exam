@@ -20,8 +20,9 @@ function verifyToken(req, res, next) {
         const decoded = jwt.verify(token, secretKey);
         
         // צירוף מידע משתמש לאובייקט הבקשה לשימוש במידלוואר/נתיבים הבאים
-        req.userId = decoded.id;
-        req.username = decoded.username;
+        req.user_id = decoded.user_id;
+        req.first_name = decoded.first_name;
+        req.last_name = decoded.last_name;
         req.role = decoded.role;
         
         console.log("decoded.role:", decoded.role);

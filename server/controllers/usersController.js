@@ -13,13 +13,25 @@ const usersController = {
     if (role === 'teacher' && !password) {
       return res.status(400).json({ error: "All required fields must be filled" });
     }
-    if (password && role === 'teacher') {
+
+    if (role === 'teacher') {
       const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@.#$!%*?&])[A-Za-z\d@.#$!%*?&]{8,15}$/;
-      if (!regex.test(password)) {
+      if (!password || !regex.test(password)) {
         return res.status(400).json({ error: "The password must contain a lowercase letter, an uppercase letter, a special character, and numbers." });
       }
       hash_password = await bcrypt.hash(password, 10);
     }
+
+    const existingUser = database.prepare(usersModel.getUserById).get(user_id);
+    if (existingUser) {
+      return res.status(409).json({ error: "User ID already exists" });
+    }
+
+    const classExists = database.prepare('SELECT class_id FROM classes WHERE class_id = ?').get(class_id);
+    if (!classExists) {
+      return res.status(400).json({ error: "Class ID does not exist" });
+    }
+
     try {
       const result = database.prepare(usersModel.register).run(user_id, first_name, last_name, hash_password, role, class_id);
       if (!result || result.changes === 0) {

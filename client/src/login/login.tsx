@@ -1,7 +1,6 @@
 import React, { FormEvent, useEffect, useState } from 'react';
 import './login.css';
-import { getClasses } from '../services/classes.service';
-import { register } from '../services/auth.service';
+import { login } from '../services/auth.service';
 
 const LoginPage: React.FC = () => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -10,15 +9,11 @@ const LoginPage: React.FC = () => {
     const rawData = Object.fromEntries(formData.entries());
     const payload = {
       user_id: String(rawData.user_id),
-      first_name: String(rawData.first_name),
-      last_name: String(rawData.last_name),
-      role: String(rawData.role),
-      class_id: Number(rawData.class_id),
+      password :String(rawData.password)
     };
 
-    console.log('Payload Submitted:', payload);
-    const result = await register(payload);
-    console.log('Register result:', result);
+    const result = await login(payload);
+    console.log(result)
   };
 
   return (
@@ -27,6 +22,7 @@ const LoginPage: React.FC = () => {
         <h2>התחברות</h2>
         <div className="input-group">
           <input type="text" name="user_id" placeholder="תעודת זהות" required />
+          <input type="password" name="password" placeholder="סיסמה" required/>
         </div>
         <button type="submit" className="submit-button">
          כניסה 
