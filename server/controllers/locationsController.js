@@ -55,6 +55,32 @@ addLocations: async (req, res) => {
       console.error("Error adding the location to the database:", err);
       res.status(500).json({ error: "Error adding the location" });
     }
+},
+getLocationsByClassId: async (req,res) =>{
+  const { class_id } = req.body;
+  if (!class_id) {
+    return res.status(400).json({ error: "class_id is required" });
+  }
+  try {
+    const rows = database.prepare(locationsModel.getLocationsByClassId).all(class_id);
+    if (!rows || rows.length === 0) {
+      return res.status(404).json({ error: "No locations found for this class" });
+    }
+    const mapPoints = rows.map(row => {
+      const coords = JSON.parse(row.coordinates);
+      return {
+        user_id: row.user_id,
+        role: row.role,
+        time: row.time,
+        lat: dmsToDecimal(coords.Latitude.Degrees, coords.Latitude.Minutes, coords.Latitude.Seconds),
+        lng: dmsToDecimal(coords.Longitude.Degrees, coords.Longitude.Minutes, coords.Longitude.Seconds)
+      };
+    });
+    return res.json(mapPoints);
+  } catch (err) {
+    console.error("Error getting locations from the database:", err);
+    return res.status(500).json({ error: "Error getting locations" });
+  }
 }
 };
 export default locationsController;
