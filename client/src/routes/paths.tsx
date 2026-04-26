@@ -1,5 +1,6 @@
 
 export const Paths = {
   register: 'register',
-  login: 'login'
+  login: 'login',
+  teacherPage: 'teacherPage'
 };

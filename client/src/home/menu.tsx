@@ -1,11 +1,7 @@
-import React, { useState } from 'react';
-import {Navigation, Search } from 'lucide-react';
 import { useNavigate } from 'react-router';
 import { Paths } from '../routes/paths';
 const Menu = () => {
-  // ניהול מצב המודלים (פתוח/סגור)
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isContactOpen, setIsContactOpen] = useState(false);
+
   const navigate =  useNavigate();
   return (
     <aside style={{ width: '280px', minHeight: '100vh', borderRight: '1px solid #ddd', background: '#f8f9fa', padding: '24px', boxSizing: 'border-box' }}>
