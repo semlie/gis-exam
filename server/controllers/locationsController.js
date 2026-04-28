@@ -5,6 +5,22 @@ import usersModel from '../models/usersModel.js'
 function dmsToDecimal(d, m, s) {
     return parseFloat(d) + (parseFloat(m) / 60) + (parseFloat(s) / 3600);
 }
+function calculateAirDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371; // רדיוס כדור הארץ בקילומטרים
+    
+    // המרה לרדיאנים
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    
+    const a = 
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const distance = R * c; 
+    
+    return distance; // תוצאה בקילומטרים
+}
 const locationsController = {
 // שליפת כל הנקודות מהמסד
 getAllLocations: async (req, res) => {
@@ -57,7 +73,7 @@ addLocations: async (req, res) => {
     }
 },
 getLocationsByClassId: async (req,res) =>{
-  const class_id = req.query.class_id || req.params.class_id;
+  const class_id = req.params.class_id;
   if (!class_id) {
     return res.status(400).json({ error: "class_id is required" });
   }
@@ -80,6 +96,53 @@ getLocationsByClassId: async (req,res) =>{
   } catch (err) {
     console.error("Error getting locations from the database:", err);
     return res.status(500).json({ error: "Error getting locations" });
+  }
+},
+getAllFarStudents: async (req, res) => {
+  const class_id = req.params.class_id;
+  const teacher_id = req.params.user_id;
+
+  if (!class_id) {
+    return res.status(400).json({ error: "class_id is required" });
+  }
+  if (!teacher_id) {
+    return res.status(400).json({ error: "teacher_id is required" });
+  }
+
+  try {
+    const teacher = database.prepare(usersModel.getTeacherById).get(teacher_id);
+    if (!teacher) {
+      return res.status(404).json({ error: "Teacher not found" });
+    }
+
+    const teacherLocationRow = database.prepare(locationsModel.getLastLocationByUserId).get(teacher_id);
+    if (!teacherLocationRow) {
+      return res.status(404).json({ error: "Teacher location not found" });
+    }
+
+    const teacherCoords = JSON.parse(teacherLocationRow.coordinates);
+    const teacherLat = dmsToDecimal(teacherCoords.Latitude.Degrees, teacherCoords.Latitude.Minutes, teacherCoords.Latitude.Seconds);
+    const teacherLng = dmsToDecimal(teacherCoords.Longitude.Degrees, teacherCoords.Longitude.Minutes, teacherCoords.Longitude.Seconds);
+
+    const studentRows = database.prepare(locationsModel.getLocationsByClassId).all(class_id);
+    const farStudents = studentRows
+      .map(row => {
+        const coords = JSON.parse(row.coordinates);
+        return {
+          user_id: row.user_id,
+          role: row.role,
+          time: row.time,
+          lat: dmsToDecimal(coords.Latitude.Degrees, coords.Latitude.Minutes, coords.Latitude.Seconds),
+          lng: dmsToDecimal(coords.Longitude.Degrees, coords.Longitude.Minutes, coords.Longitude.Seconds)
+        };
+      })
+      .filter(row => row.role === 'student' && row.user_id !== teacher_id)
+      .filter(row => calculateAirDistance(teacherLat, teacherLng, row.lat, row.lng) > 3);
+
+    return res.json(farStudents);
+  } catch (err) {
+    console.error("Error in getAllFarStudents:", err);
+    return res.status(500).json({ error: "Error fetching far students" });
   }
 }
 };

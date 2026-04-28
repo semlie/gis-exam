@@ -5,4 +5,5 @@ locationsRouter.get("/getAllLocations", locationsController.getAllLocations);
 locationsRouter.post("/addLocations", locationsController.addLocations);
 locationsRouter.get("/getLocationsByClassId", locationsController.getLocationsByClassId);
 locationsRouter.get("/getLocationsByClassId/:class_id", locationsController.getLocationsByClassId);
+locationsRouter.get("/getAllFarStudents/:class_id/:user_id", locationsController.getAllFarStudents);
 export default locationsRouter;
