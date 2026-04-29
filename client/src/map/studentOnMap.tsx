@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { io } from "socket.io-client";
 import MyMap from "./map";
 import { getAllLocations } from "../services/map.service";
 
@@ -16,7 +17,24 @@ const StudentsOnMap = () => {
       }
     };
 
+    const socket = io("http://localhost:4000");
+
+    socket.on("studentLocationUpdate", (data) => {
+      console.log("New location received:", data);
+      setPoints((prev) => {
+        const exists = prev.some((point: any) => point.user_id === data.user_id);
+        if (exists) {
+          return prev.map((point: any) => (point.user_id === data.user_id ? data : point));
+        }
+        return [...prev, data];
+      });
+    });
+
     loadLocations();
+
+    return () => {
+      socket.disconnect();
+    };
   }, []);
 
   const filteredPoints = filterId
