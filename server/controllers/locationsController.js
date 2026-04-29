@@ -128,16 +128,22 @@ getAllFarStudents: async (req, res) => {
     const farStudents = studentRows
       .map(row => {
         const coords = JSON.parse(row.coordinates);
+        const lat = dmsToDecimal(coords.Latitude.Degrees, coords.Latitude.Minutes, coords.Latitude.Seconds);
+        const lng = dmsToDecimal(coords.Longitude.Degrees, coords.Longitude.Minutes, coords.Longitude.Seconds);
+        const distanceKm = calculateAirDistance(teacherLat, teacherLng, lat, lng);
         return {
           user_id: row.user_id,
           role: row.role,
           time: row.time,
-          lat: dmsToDecimal(coords.Latitude.Degrees, coords.Latitude.Minutes, coords.Latitude.Seconds),
-          lng: dmsToDecimal(coords.Longitude.Degrees, coords.Longitude.Minutes, coords.Longitude.Seconds)
+          first_name: row.first_name,
+          last_name: row.last_name,
+          full_name: `${row.first_name} ${row.last_name}`,
+          distance_km: Number(distanceKm.toFixed(2)),
+          location_label: `${lat.toFixed(3).replace('.', ',')} , ${lng.toFixed(3).replace('.', ',')}`
         };
       })
       .filter(row => row.role === 'student' && row.user_id !== teacher_id)
-      .filter(row => calculateAirDistance(teacherLat, teacherLng, row.lat, row.lng) > 3);
+      .filter(row => row.distance_km > 3);
 
     return res.json(farStudents);
   } catch (err) {

@@ -28,15 +28,25 @@ const FarStudents = ()=>{
         <div>
             <h2>Far Students</h2>
             {students.length === 0 ? (
-                <p>No far students found.</p>
+                <p>לא נמצאו תלמידים רחוקים כעת.</p>
             ) : (
-                <ul>
+                <div style={{ display: 'grid', gap: '14px' }}>
                     {students.map((student: any) => (
-                        <li key={student.user_id}>
-                            {student.user_id} - {student.role} - {student.lat}, {student.lng}
-                        </li>
+                        <div
+                            key={student.user_id}
+                            style={{
+                                padding: '16px',
+                                border: '1px solid #dcdcdc',
+                                borderRadius: '12px',
+                                backgroundColor: '#f7f9fc',
+                                boxShadow: '0 2px 6px rgba(0,0,0,0.05)'
+                            }}>
+                            <h3 style={{ margin: '0 0 8px 0' }}>{student.full_name}</h3>
+                            <p style={{ margin: '4px 0', color: '#555' }}><strong>ת"ז:</strong> {student.user_id}</p>
+                            <p style={{ margin: '4px 0', color: '#555' }}><strong>מרחק:</strong> {student.distance_km} ק"מ</p>
+                        </div>
                     ))}
-                </ul>
+                </div>
             )}
         </div>
     );
