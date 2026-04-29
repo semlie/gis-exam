@@ -2,5 +2,6 @@
 export const Paths = {
   register: 'register',
   login: 'login',
-  teacherPage: 'teacherPage'
+  teacherPage: 'teacherPage',
+  farStudents:'farStudents'
 };

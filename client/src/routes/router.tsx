@@ -4,6 +4,7 @@ import RegisterPage from '../register/register.tsx';
 import HomePage from '../home/home.tsx';
 import LoginPage from '../login/login.tsx';
 import TeacherPage from '../teacherPage/teacherPage.tsx';
+import FarStudents from '../teacherPage/farStudents.tsx';
 const Routes = () => {
   const router = createBrowserRouter([
     {
@@ -21,6 +22,10 @@ const Routes = () => {
     {
       path : Paths.teacherPage,
       element : <TeacherPage/>
+    },
+    {
+      path : Paths.farStudents,
+      element : <FarStudents/>
     },
     {
       path: '*',

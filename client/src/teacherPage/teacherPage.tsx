@@ -4,6 +4,7 @@ import { getLocationsByClassId } from "../services/map.service";
 import { getUserSession } from '../auth/auth.utils';
 import { Paths } from '../routes/paths.tsx';
 import MyMap from '../map/map.tsx'
+import TeacherMenu from './teacherMenu.tsx'
 const TeacherPage = ()=>{
   const [points, setPoints] = useState([]);
   const navigate = useNavigate();
@@ -31,11 +32,11 @@ const TeacherPage = ()=>{
     )
     return (
       <div style={{ width: '100%', minHeight: '100vh', display: 'flex' }}>
-        <div style={{ flex: 1, minHeight: '100vh' }}>
+        <TeacherMenu/>
+        <main style={{ flex: 1, minHeight: '100vh' }}>
           <MyMap points={points} />
-        </div>
+        </main>
       </div>
     );
 };
-
 export default TeacherPage;
