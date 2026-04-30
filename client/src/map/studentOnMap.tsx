@@ -17,10 +17,12 @@ const StudentsOnMap = () => {
       }
     };
 
+    // חיבור ל־Socket.IO לקבלת עדכונים חיים
     const socket = io("http://localhost:4000");
 
     socket.on("studentLocationUpdate", (data) => {
       console.log("New location received:", data);
+      // כאשר מגיע עדכון חי, מעדכנים את הרשומה הקיימת או מוסיפים נקודה חדשה
       setPoints((prev) => {
         const exists = prev.some((point: any) => point.user_id === data.user_id);
         if (exists) {
@@ -33,6 +35,7 @@ const StudentsOnMap = () => {
     loadLocations();
 
     return () => {
+      // נתק את החיבור ל־Socket כאשר הדף נסגר או נהיה לא פעיל
       socket.disconnect();
     };
   }, []);
@@ -40,6 +43,7 @@ const StudentsOnMap = () => {
   const filteredPoints = filterId
     ? points.filter((point) => String(point.user_id).includes(filterId.trim()))
     : points;
+  // נקודות שעברו סינון לפי תעודת זהות, אם קיים ערך בסינון
 
   return (
     <div style={{ height: '100%', width: '100%' }}>

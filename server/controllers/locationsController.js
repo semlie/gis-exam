@@ -2,14 +2,15 @@ import database from '../db/initDB.js';
 import locationsModel from '../models/locationsModel.js'
 import usersModel from '../models/usersModel.js'
 import { getIo } from '../sockets/appSocket.js';
-// פונקציה להמרת DMS (מעלות, דקות, שניות) לעשרוני
+
+// המרת קואורדינטות DMS (מעלות / דקות / שניות) לקואורדינטות עשרוניות
 function dmsToDecimal(d, m, s) {
     return parseFloat(d) + (parseFloat(m) / 60) + (parseFloat(s) / 3600);
 }
 function calculateAirDistance(lat1, lon1, lat2, lon2) {
     const R = 6371; // רדיוס כדור הארץ בקילומטרים
     
-    // המרה לרדיאנים
+    // המרת מעלות לרדיאנים
     const dLat = (lat2 - lat1) * Math.PI / 180;
     const dLon = (lon2 - lon1) * Math.PI / 180;
     
@@ -23,7 +24,8 @@ function calculateAirDistance(lat1, lon1, lat2, lon2) {
     return distance; // תוצאה בקילומטרים
 }
 const locationsController = {
-// שליפת כל הנקודות מהמסד
+  // שליפת הנקודות האחרונות מכל המשתמשים מהמסד
+  // השאילתה מחזירה רק שורה אחרונה לכל משתמש.
 getAllLocations: async (req, res) => {
   try {
     const rows = database.prepare(locationsModel.getAllLocations).all();
@@ -56,18 +58,22 @@ addLocations: async (req, res) => {
     const userId = user_id?.toString();
     let time = requestTime;
     const currentTime = new Date().toISOString();
+
     if (!userId || !coords) {
       return res.status(400).json({ error: "All required fields must be filled" });
     }
     if (!time) {
         time = currentTime;
     }
+
     try {
+      // שמירת רשומת מיקום חדשה בבסיס הנתונים
       const result = database.prepare(locationsModel.addLocations).run(userId, time, JSON.stringify(coords));
       if (!result || result.changes === 0) {
         return res.status(500).json({ error: "Error adding location" });
       }
 
+      // המרת קואורדינטות DMS לדצימליות כדי לשלוח ללקוחות בזמן אמת
       const user = database.prepare(usersModel.getUserById).get(userId);
       const coordsObj = coords;
       const lat = dmsToDecimal(coordsObj.Latitude.Degrees, coordsObj.Latitude.Minutes, coordsObj.Latitude.Seconds);
@@ -80,6 +86,7 @@ addLocations: async (req, res) => {
         lng
       };
 
+      // שידור עדכון בזמן אמת לכל הלקוחות המחוברים לאחר הוספת מיקום חדש
       const io = getIo();
       if (io) {
         io.emit("studentLocationUpdate", newLocation);
@@ -92,6 +99,7 @@ addLocations: async (req, res) => {
     }
 },
 getLocationsByClassId: async (req,res) =>{
+  // החזרת המיקום האחרון לכל משתמש בכיתה המבוקשת
   const class_id = req.params.class_id;
   if (!class_id) {
     return res.status(400).json({ error: "class_id is required" });
@@ -117,7 +125,8 @@ getLocationsByClassId: async (req,res) =>{
     return res.status(500).json({ error: "Error getting locations" });
   }
 },
-getAllFarStudents: async (req, res) => {
+  // מחזיר תלמידים בכיתה המרוחקים יותר מ-3 ק"מ מהמורה
+  getAllFarStudents: async (req, res) => {
   const class_id = req.params.class_id;
   const teacher_id = req.params.user_id;
 

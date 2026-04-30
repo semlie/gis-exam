@@ -3,7 +3,6 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
-// פתרון לבעיה ידועה שבה האייקונים של Leaflet לא מופיעים ב-React
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 let DefaultIcon = L.icon({
@@ -14,6 +13,7 @@ let DefaultIcon = L.icon({
 });
 L.Marker.prototype.options.icon = DefaultIcon;
 
+// אייקון של המורה
 const TeacherIcon = L.divIcon({
   className: '',
   html: '<div style="width: 20px; height: 20px; border-radius: 50%; background: red; border: 2px solid white; box-shadow: 0 0 4px rgba(0,0,0,0.4);"></div>',
@@ -22,16 +22,16 @@ const TeacherIcon = L.divIcon({
 });
 
 const MyMap = ({ points }) => {
-  // נקודת מרכז ראשונית (למשל תל אביב)
+  // נקודת מרכז ראשונית של המפה
   const position = [32.0853, 34.7818];
 
   return (
-    <MapContainer center={position} zoom={13} style={{ height: '100%', width: '100%' }}>
-      <TileLayer
+    <MapContainer center={position} zoom={13} style={{ height: '100%', width: '100%' }}>      <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       />
       
+      {/* יצירת Marker לכל נקודת מיקום שמתקבלת ב-props */}
       {points.map((point) => {
         const role = String(point.role ?? '').trim().toLowerCase();
         const isTeacher = role === 'teacher';

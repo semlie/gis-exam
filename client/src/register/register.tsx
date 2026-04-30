@@ -22,7 +22,8 @@ const RegisterPage: React.FC = () => {
   }, []);
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
+    const form = e.currentTarget;
+    const formData = new FormData(form);
     const rawData = Object.fromEntries(formData.entries());
 
     const classIdValue = String(rawData.class_id ?? '').trim();
@@ -37,12 +38,21 @@ const RegisterPage: React.FC = () => {
       last_name: String(rawData.last_name),
       role,
       class_id: Number(classIdValue),
-      ...(role === 'teacher' ? { password } : {}),
+      password: role === 'teacher' ? password : null,
     };
 
     console.log('Payload Submitted:', payload);
-    const result = await register(payload);
-    console.log('Register result:', result);
+    try {
+      const result = await register(payload);
+      console.log('Register result:', result);
+      alert('ההרשמה הצליחה!');
+      form.reset();
+      setPassword('');
+      setRole('student');
+    } catch (error) {
+      console.error('Register failed:', error);
+      alert('ההרשמה נכשלה. אנא נסה שוב.');
+    }
   };
 
   return (
