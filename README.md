@@ -34,7 +34,6 @@ Install dependencies: npm install
 
 Start the app: npm run dev
 
-Note: Open the URL provided in your Vite terminal.  
 
 ## Technical Implementation
 Database: Data is stored and managed in SQLite (server/gis_db.db).  
@@ -81,3 +80,9 @@ GET /locations/getLocationsByClassId/:class_id – Get locations for a specific 
 POST /locations/addLocations – Add a new student location record.  
 
 GET /locations/getAllFarStudents/:class_id/:user_id – Calculate and find students further than 3 km from the teacher.
+
+## Screenshots
+
+in the folder images
+
+(/images)[image]
