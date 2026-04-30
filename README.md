@@ -84,5 +84,4 @@ GET /locations/getAllFarStudents/:class_id/:user_id – Calculate and find stude
 ## Screenshots
 
 in the folder images
-![תיאור התמונה](נתיב/אל/התמונה.jpg)
-![image](/images)
+![image](/server/images)
