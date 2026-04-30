@@ -1,7 +1,9 @@
 import { Server } from "socket.io";
 
+let io;
+
 export const createSocket = (server) => {
-  const io = new Server(server, {
+  io = new Server(server, {
     cors: {
       origin: "*",
       methods: ["GET", "POST"]
@@ -23,3 +25,5 @@ export const createSocket = (server) => {
   
   return io;
 };
+
+export const getIo = () => io;

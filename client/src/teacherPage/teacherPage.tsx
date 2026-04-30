@@ -6,7 +6,7 @@ import { getUserSession } from '../auth/auth.utils';
 import MyMap from '../map/map.tsx'
 import TeacherMenu from './teacherMenu.tsx'
 const TeacherPage = ()=>{
-  const [points, setPoints] = useState([]);
+  const [points, setPoints] = useState<any[]>([]);
   const navigate = useNavigate();
     useEffect(
         () => {
@@ -30,8 +30,13 @@ const TeacherPage = ()=>{
             const socket = io("http://localhost:4000");
             socket.on("studentLocationUpdate", (data) => {
               console.log("New location received:", data);
-              // כאן ניתן לעדכן את ה-state של המפה אם השרת שולח מיקום חדש
-              // לדוגמה: setPoints((prev) => [...prev, data]);
+              setPoints((prev) => {
+                const exists = prev.some((point: any) => point.user_id === data.user_id);
+                if (exists) {
+                  return prev.map((point: any) => (point.user_id === data.user_id ? data : point));
+                }
+                return [...prev, data];
+              });
             });
 
             loadLocationsOfClass();

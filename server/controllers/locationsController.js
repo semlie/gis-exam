@@ -1,6 +1,7 @@
 import database from '../db/initDB.js';
 import locationsModel from '../models/locationsModel.js'
 import usersModel from '../models/usersModel.js'
+import { getIo } from '../sockets/appSocket.js';
 // פונקציה להמרת DMS (מעלות, דקות, שניות) לעשרוני
 function dmsToDecimal(d, m, s) {
     return parseFloat(d) + (parseFloat(m) / 60) + (parseFloat(s) / 3600);
@@ -66,6 +67,24 @@ addLocations: async (req, res) => {
       if (!result || result.changes === 0) {
         return res.status(500).json({ error: "Error adding location" });
       }
+
+      const user = database.prepare(usersModel.getUserById).get(userId);
+      const coordsObj = coords;
+      const lat = dmsToDecimal(coordsObj.Latitude.Degrees, coordsObj.Latitude.Minutes, coordsObj.Latitude.Seconds);
+      const lng = dmsToDecimal(coordsObj.Longitude.Degrees, coordsObj.Longitude.Minutes, coordsObj.Longitude.Seconds);
+      const newLocation = {
+        user_id: userId,
+        role: user?.role ?? null,
+        time,
+        lat,
+        lng
+      };
+
+      const io = getIo();
+      if (io) {
+        io.emit("studentLocationUpdate", newLocation);
+      }
+
       res.status(201).json({ message: "location successfully", userId });
     } catch (err) {
       console.error("Error adding the location to the database:", err);
